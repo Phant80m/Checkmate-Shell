@@ -74,7 +74,7 @@ pub fn shell() {
             let path = &command[6..];
             match std::fs::create_dir(path) {
                 Ok(_) => println!("Created directory {}", path),
-                Err(e) => eprintln!("failed to find directory"),
+                Err(_) => eprintln!("failed to find directory"),
             }
 
         }
