@@ -88,7 +88,7 @@ pub fn shell() {
             }
         }
 
-
+        // remove file (NOT REMOVE DIRECTORY)
         command if command.starts_with("rm ") => {
             let path = &command[3..];
             match std::fs::remove_file(path) {
@@ -96,6 +96,8 @@ pub fn shell() {
                 Err(_) => eprintln!("failed to delete file.")
             }
         }
+
+        // create file, Different to makedir
         command if command.starts_with("mk ") => {
             let path = &command[3..];
             match std::fs::File::create(path) {
@@ -114,9 +116,7 @@ pub fn shell() {
                 Err(err) => {
                     eprintln!("error {}", err);
                 }
-
             }
-
         }
         // wrong cmd | else
         _ => {
