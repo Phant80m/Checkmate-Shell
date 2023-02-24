@@ -5,16 +5,9 @@ use std::fs;
 use std::io::{self, Write};
 use hostname;
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() == 2 {
-        eprintln!("no args provided, type --help for help");
-        std::process::exit(0);
-    } else if args.contains(&String::from("-h")) || args.contains(&String::from("--help")) {
-        arguments();
-    } else {
-        loop {
-            shell()
-        }
+    arguments();
+    loop {
+        shell();
     }
 
 }
@@ -89,6 +82,14 @@ fn shell() {
                 eprintln!("Failed to find directory {}", e)
             }
         },
+        command if command.starts_with("mkdir ") => {
+            let path = &command[6..];
+            match std::fs::create_dir(path) {
+                Ok(_) => println!("Created directory {}", path),
+                Err(e) => eprintln!("failed to find directory"),
+            }
+
+        }
         // wrong cmd | else
         _ => {
             eprintln!("{}", "not a known command!".on_red());
