@@ -4,5 +4,5 @@
 </div>
 
 
-<h1> build checkmate shell with cargo! </h1>
+<h1> build checkmate shell with cargo! <br> `cargo build --release` </h1>
 <img alt="Issues" src="https://raw.githubusercontent.com/Phant80m/Checkmate-Shell/main/icons/square.jpg"/>
