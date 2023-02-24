@@ -70,11 +70,51 @@ pub fn shell() {
                 eprintln!("Failed to find directory {}", e)
             }
         },
+        // mkdir feature
         command if command.starts_with("mkdir ") => {
             let path = &command[6..];
             match std::fs::create_dir(path) {
                 Ok(_) => println!("Created directory {}", path),
                 Err(_) => eprintln!("failed to find directory"),
+            }
+
+        }
+        // remove directory
+        command if command.starts_with("rmdir ") => {
+            let path = &command[6..];
+            match std::fs::remove_dir(path) {
+                Ok(_) => println!("removed directory {}", path),
+                Err(_) => eprintln!("cannot find directory specified"),
+            }
+        }
+
+
+        command if command.starts_with("rm ") => {
+            let path = &command[3..];
+            match std::fs::remove_file(path) {
+                Ok(_) => println!("deleted {}", path),
+                Err(_) => eprintln!("failed to delete file.")
+            }
+        }
+        command if command.starts_with("mk ") => {
+            let path = &command[3..];
+            match std::fs::File::create(path) {
+                Ok(_) => println!("Created {}", path),
+                Err(_) => eprintln!("failed to create file.")
+            }
+        }
+
+        // cat command (for reading files)
+        command if command.starts_with("cat ") => {
+            let path = &command[4..];
+            match std::fs::read_to_string(path) {
+                Ok(contents) => {
+                    println!("{}", contents);
+                },
+                Err(err) => {
+                    eprintln!("error {}", err);
+                }
+
             }
 
         }

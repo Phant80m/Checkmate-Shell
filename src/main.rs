@@ -1,11 +1,11 @@
-#[allow(unused_imports)]
-mod command;
+mod shell;
 mod arguments;
 fn main() {
+    // arguments main;
     arguments::arguments();
+    
     loop {
-        command::shell();
-
+        // shell main
+        shell::shell();
     }
-
 }
