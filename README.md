@@ -6,4 +6,4 @@
 
 <h1> Build Instructions:</h1>
 `cargo build`
-<img alt="Issues" src="https://raw.githubusercontent.com/Phant80m/Checkmate-Shell/main/icons/square.jpg"/>
+# <img alt="Issues" src="https://raw.githubusercontent.com/Phant80m/Checkmate-Shell/main/icons/square.jpg"/>
