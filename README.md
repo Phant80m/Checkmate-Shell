@@ -5,4 +5,4 @@
 
 
 <h1> build checkmate shell with cargo! </h1>
-[![](https://raw.githubusercontent.com/Phant80m/Checkmate-Shell/main/icons/square.jpg)
+<img alt="Issues" src="https://raw.githubusercontent.com/Phant80m/Checkmate-Shell/main/icons/square.jpg"/>
