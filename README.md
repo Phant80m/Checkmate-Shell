@@ -5,7 +5,5 @@
 
 
 <h1> Build Instructions:</h1>
-```zsh
-cargo build --release
-```
+`cargo build`
 <img alt="Issues" src="https://raw.githubusercontent.com/Phant80m/Checkmate-Shell/main/icons/square.jpg"/>
