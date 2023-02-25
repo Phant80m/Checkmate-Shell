@@ -1,6 +1,5 @@
-##Checkmate
-
-# A simple shell written in Rust.
+# Checkmate
+## A simple shell written in Rust.
 Features
 
     ls/dir: List files in the current directory
