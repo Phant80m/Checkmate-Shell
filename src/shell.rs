@@ -118,6 +118,14 @@ pub fn shell() {
                 }
             }
         }
+        // test command
+        "aps" => {
+            let output = std::process::Command::new("powershell")
+                .arg("./aps.ps1")
+                .output()
+                .expect("failed to execute process");
+            println!("{}", String::from_utf8_lossy(&output.stdout));
+        }
         // wrong cmd | else
         _ => {
             eprintln!("{}", "not a known command!".on_red());
