@@ -17,8 +17,15 @@ Features
 
 Installation
 
-Clone the repository and run cargo build to build the shell. You can then run it with ./target/debug/rusty-shell.
-Usage
+Clone the repository and build it:
+```powershell
+cargo build --release
+```
+and run it with
+```poweshell
+cargo run --release
+```
+You can alternatively use makefile, `make run` or `make build`
 
 Once the shell is running, you can enter commands at the prompt. Use the help command to see a list of available commands.
 
