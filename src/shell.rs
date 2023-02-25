@@ -1,24 +1,30 @@
 #[allow(unused_imports)]
 use colored::Colorize;
-use std::fs;
 use std::io::{self, Write};
 use hostname;
 
-fn directory() -> Vec<String> {
-    let mut files = Vec::new();
-    if let Ok(entries) = fs::read_dir(".") {
+
+fn directory() -> String {
+    let mut files = String::new();
+    if let Ok(entries) = std::fs::read_dir(".") {
         for entry in entries {
             if let Ok(entry) = entry {
                 let filename = entry.file_name().to_string_lossy().to_string();
-                files.push(filename.clone());
-                println!("{}", filename);
+                let colored_filename = if entry.path().is_dir() {
+                    filename.blue().bold().to_string()
+                } else {
+                    filename.normal().to_string()
+                };
+                files.push_str(&format!("{}  ", colored_filename));
             }
         }
     }
 
     files
 }
+
 pub fn shell() {
+    // shell headers | prompt
     let cwd = std::env::current_dir().unwrap();
     let cwd_string = cwd.to_string_lossy().to_string().replace("\\", "");
     let host = hostname::get().unwrap_or_else(|_| "unknown".to_string().into());
@@ -42,9 +48,7 @@ pub fn shell() {
         "dir" | "ls" => {
 
             let output = directory();
-            for file in output {
-                println!("{}", file);
-            }
+            println!("{}", output);
 
         },
 
