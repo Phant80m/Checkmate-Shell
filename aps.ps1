@@ -1,3 +1,4 @@
+$date = Get-Date
 git add . 
-git commit -m "AutoPushScript | pushed on $(date +"%Y-%m-%d %H:%M:%S")"
+git commit -m "AutoPushScript | pushed on $DATE"
 git push
