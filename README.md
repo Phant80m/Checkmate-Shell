@@ -12,7 +12,7 @@ Features
     echo: Print a message to the console (useless feature)
     clear/cls: Clear the console screen
     exit/quit/q: Exit the shell
-    aps: Test command to execute a PowerShell script
+    push: Command to automate github commits
 
 Installation
 
