@@ -119,7 +119,7 @@ pub fn shell() {
             }
         }
         // test command
-        "aps" => {
+        "push" => {
             let output = std::process::Command::new("powershell")
                 .arg("./aps.ps1")
                 .output()
