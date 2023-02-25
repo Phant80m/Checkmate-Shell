@@ -29,9 +29,11 @@ pub fn shell() {
     let cwd_string = cwd.to_string_lossy().to_string().replace("\\", "");
     let host = hostname::get().unwrap_or_else(|_| "unknown".to_string().into());
     let host_string = host.to_string_lossy().to_string();
+    let checkmate_demo = "Checkmate @";
 
 
-    print!("{}{}{}{}{}", "".black().bold().on_bright_white(), host_string.black().bold().on_bright_white(), "".black().bright_white().bold().on_green(), cwd_string.black().to_string().on_green(), "".green().bold());
+    print!("{}{}{}{}{}", "".black().bold().on_bright_white(), 
+    checkmate_demo.black().bold().on_bright_white(), "".black().bright_white().bold().on_green(), cwd_string.black().to_string().on_green(), "".green().bold());
     io::stdout().flush().unwrap();
 
 
