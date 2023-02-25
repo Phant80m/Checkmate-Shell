@@ -1,3 +1,3 @@
 git add . 
-git commit -m "Phant80m Auto push script"
+git commit -m "AutoPushScript | pushed on $(date +"%Y-%m-%d %H:%M:%S")"
 git push
