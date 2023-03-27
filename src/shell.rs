@@ -1,22 +1,19 @@
 #[allow(unused_imports)]
 use colored::Colorize;
-use std::io::{self, Write};
 use hostname;
-
+use std::io::{self, Write};
 
 fn directory() -> String {
     let mut files = String::new();
     if let Ok(entries) = std::fs::read_dir(".") {
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let filename = entry.file_name().to_string_lossy().to_string();
-                let colored_filename = if entry.path().is_dir() {
-                    filename.blue().bold().to_string()
-                } else {
-                    filename.normal().to_string()
-                };
-                files.push_str(&format!("{}  ", colored_filename));
-            }
+        for entry in entries.flatten() {
+            let filename = entry.file_name().to_string_lossy().to_string();
+            let colored_filename = if entry.path().is_dir() {
+                filename.blue().bold().to_string()
+            } else {
+                filename.normal().to_string()
+            };
+            files.push_str(&format!("{}  ", colored_filename));
         }
     }
 
@@ -26,33 +23,33 @@ fn directory() -> String {
 pub fn shell() {
     // shell headers | prompt
     let cwd = std::env::current_dir().unwrap();
-    let cwd_string = cwd.to_string_lossy().to_string().replace("\\", "");
+    let cwd_string = cwd.to_string_lossy().to_string().replace(['\\', '/'], "");
     let host = hostname::get().unwrap_or_else(|_| "unknown".to_string().into());
     let host_string = host.to_string_lossy().to_string();
     let checkmate_demo = "Checkmate @";
 
-
-    print!("{}{}{}{}{}", "".black().bold().on_bright_white(), 
-    checkmate_demo.black().bold().on_bright_white(), "".black().bright_white().bold().on_green(), cwd_string.black().to_string().on_green(), "".green().bold());
+    print!(
+        "{}{}{}{}{}",
+        "".black().bold().on_bright_white(),
+        checkmate_demo.black().bold().on_bright_white(),
+        "".black().bright_white().bold().on_green(),
+        cwd_string.black().to_string().on_green(),
+        "".green().bold()
+    );
     io::stdout().flush().unwrap();
 
-
     let mut command = String::new();
-    std::io::stdin().read_line(&mut command)
-    .expect("Failed to read line");
+    std::io::stdin()
+        .read_line(&mut command)
+        .expect("Failed to read line");
     let command = command.trim();
-    
-
-
 
     match command {
         // dir command
         "dir" | "ls" => {
-
             let output = directory();
             println!("{}", output);
-
-        },
+        }
 
         // exit feature
         "exit" | "quit" | "q" => std::process::exit(0),
@@ -67,15 +64,15 @@ pub fn shell() {
         command if command.starts_with("echo ") => {
             let echo_out = &command[5..];
             println!("{}", echo_out);
-        },
+        }
 
         // change dir! works with shell prompt
         command if command.starts_with("cd ") => {
-            let path = &command[3..];   
+            let path = &command[3..];
             if let Err(e) = std::env::set_current_dir(path) {
                 eprintln!("Failed to find directory {}", e)
             }
-        },
+        }
         // mkdir feature
         command if command.starts_with("mkdir ") => {
             let path = &command[6..];
@@ -83,7 +80,6 @@ pub fn shell() {
                 Ok(_) => println!("Created directory {}", path),
                 Err(_) => eprintln!("failed to find directory"),
             }
-
         }
         // remove directory
         command if command.starts_with("rmdir ") => {
@@ -99,7 +95,7 @@ pub fn shell() {
             let path = &command[3..];
             match std::fs::remove_file(path) {
                 Ok(_) => println!("deleted {}", path),
-                Err(_) => eprintln!("failed to delete file.")
+                Err(_) => eprintln!("failed to delete file."),
             }
         }
 
@@ -108,7 +104,7 @@ pub fn shell() {
             let path = &command[3..];
             match std::fs::File::create(path) {
                 Ok(_) => println!("Created {}", path),
-                Err(_) => eprintln!("failed to create file.")
+                Err(_) => eprintln!("failed to create file."),
             }
         }
 
@@ -118,23 +114,53 @@ pub fn shell() {
             match std::fs::read_to_string(path) {
                 Ok(contents) => {
                     println!("{}", contents);
-                },
+                }
                 Err(err) => {
                     eprintln!("error {}", err);
                 }
             }
         }
-        // test command
-        "push" => {
-            let output = std::process::Command::new("powershell")
-                .arg("./aps.ps1")
-                .output()
-                .expect("failed to execute process");
-            println!("{}", String::from_utf8_lossy(&output.stdout));
-        }
-        // wrong cmd | else
+        // no cmd
+        "" => {}
         _ => {
-            eprintln!("{}", "not a known command!".on_red());
+            use std::io::{BufRead, BufReader};
+            use std::process::Stdio;
+            let mut splitted = command.split_whitespace();
+            let mut pre_cmd = std::process::Command::new(splitted.next().unwrap());
+            for arg in splitted {
+                pre_cmd.arg(arg);
+            }
+            let mut cmd = match pre_cmd.stdout(Stdio::piped()).spawn() {
+                Ok(c) => c,
+                Err(err) => {
+                    if err.kind() != io::ErrorKind::NotFound {
+                        let err_msg =
+                            "Problem running the command: ".to_string() + &err.to_string();
+                        eprintln!("{}", err_msg.on_red());
+                        return;
+                    }
+                    eprintln!("{}", "not a known command!".on_red());
+                    return;
+                }
+            };
+            let stdout = cmd.stdout.take().unwrap();
+
+            let mut bufread = BufReader::new(stdout);
+            let mut buf = String::new();
+            let mut fbuf = String::new();
+            while let Ok(num_read) = bufread.read_line(&mut buf) {
+                if num_read > 0 {
+                    print!("{}", buf);
+                    fbuf += &buf;
+                    buf.clear();
+                } else {
+                    break;
+                }
+            }
+            if !fbuf.ends_with('\n') {
+                println!("{}", "%".on_white().black());
+            }
         }
     };
 }
+
