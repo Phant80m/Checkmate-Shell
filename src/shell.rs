@@ -1,9 +1,9 @@
 #[allow(unused_imports)]
 use colored::Colorize;
-use hostname;
+
 use std::io::{self, Write};
 
-fn directory() -> String {
+fn _directory() -> String {
     let mut files = String::new();
     if let Ok(entries) = std::fs::read_dir(".") {
         for entry in entries.flatten() {
@@ -26,12 +26,12 @@ pub fn shell() {
     let cwd_string = cwd.to_string_lossy().to_string().replace(['\\', '/'], "");
     let host = hostname::get().unwrap_or_else(|_| "unknown".to_string().into());
     let _host_string = host.to_string_lossy().to_string();
-    let checkmate_demo = format!("{} @", env!("USER"));
+    let checkmate_prompt = format!("{} @", env!("USER"));
 
     print!(
         "{}{}{}{}{}",
         "".black().bold().on_bright_white(),
-        checkmate_demo.black().bold().on_bright_white(),
+        checkmate_prompt.black().bold().on_bright_white(),
         "".black().bright_white().bold().on_green(),
         cwd_string.black().to_string().on_green(),
         " ".green().bold()
@@ -46,13 +46,22 @@ pub fn shell() {
 
     match command {
         // dir command
-                // no cmd
-        "" => {}
+        // no cmd
+        "quit" | "exit" => std::process::exit(0),
+
+        command if command.starts_with("cd ") => {
+            let _path = &command[3..];
+            let path = &command[3..];
+            if let Err(e) = std::env::set_current_dir(path) {
+                eprintln!("Failed to find directory {}", e)
+            }
+        }
+
         _ => {
             use std::io::{BufRead, BufReader};
             use std::process::Stdio;
             let mut splitted = command.split_whitespace();
-            let mut pre_cmd = std::process::Command::new(splitted.next().unwrap());
+            let mut pre_cmd = std::process::Command::new(splitted.next().unwrap_or_default());
             for arg in splitted {
                 pre_cmd.arg(arg);
             }
@@ -65,7 +74,7 @@ pub fn shell() {
                         eprintln!("{}", err_msg.on_red());
                         return;
                     }
-                    eprintln!("{}", "not a known command!".on_red());
+                    eprintln!("{}", "not a known command!".red().bold());
                     return;
                 }
             };
@@ -89,4 +98,3 @@ pub fn shell() {
         }
     };
 }
-
